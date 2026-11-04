@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10264a">
+<title>Simulador Psicotécnico MININT Angola</title>
+<style>
+:root{--navy:#10264a;--blue:#1769d2;--bg:#f3f6fb;--ink:#17243a;--muted:#65738a;--line:#dce4ef;--white:#fff;--green:#16834a;--red:#c53b45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(135deg,#10264a,#174f91);color:white;padding:26px 18px 34px;text-align:center}
+header .mark{font-size:12px;letter-spacing:2px;font-weight:800;opacity:.85}header h1{font-size:clamp(24px,5vw,36px);margin:9px 0 5px}header p{margin:0;color:#d9e8ff}
+main{max-width:850px;margin:-18px auto 40px;padding:0 14px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 28px #18365c0d;margin-bottom:16px}
+h2{margin:0 0 8px;font-size:22px}.muted{color:var(--muted);line-height:1.55}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}
+.category{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;background:white;color:var(--ink);cursor:pointer;min-height:110px}
+.category:hover{border-color:var(--blue);background:#f5f9ff}.category b{display:block;margin-bottom:5px}.category span{font-size:13px;color:var(--muted)}
+button{font:inherit}.primary{background:var(--blue);color:white;border:0;border-radius:12px;padding:13px 18px;font-weight:750;cursor:pointer;width:100%}.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary{background:#edf3fb;color:var(--navy);border:1px solid var(--line);border-radius:12px;padding:11px 15px;font-weight:700;cursor:pointer}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.stat{background:#f3f7fc;border-radius:12px;padding:10px 13px;flex:1;min-width:100px}.stat strong{display:block;font-size:20px;color:var(--navy)}.stat small{color:var(--muted)}
+#quiz,#result{display:none}
+.topline{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;color:var(--muted);font-size:14px}
+.timer{font-weight:850;color:var(--blue);font-variant-numeric:tabular-nums}.bar{height:8px;background:#e8eef6;border-radius:20px;overflow:hidden;margin:12px 0 22px}.bar>div{height:100%;background:var(--blue);width:100%;transition:width .3s}
+.qtext{font-size:21px;line-height:1.4;font-weight:750;margin:10px 0 18px}
+.options{display:grid;gap:10px}.option{width:100%;padding:14px;text-align:left;background:white;border:1.5px solid var(--line);border-radius:12px;color:var(--ink);cursor:pointer}.option.selected{border-color:var(--blue);background:#eef5ff}.option:disabled{cursor:default}
+.feedback{margin-top:14px;padding:12px;border-radius:12px;background:#f2f6fb;color:var(--muted);display:none}
+.result-score{font-size:48px;font-weight:900;color:var(--blue);margin:4px 0}
+.review{border-top:1px solid var(--line);padding:13px 0}.correct{color:var(--green);font-weight:700}.wrong{color:var(--red);font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
+@media(max-width:520px){.panel{padding:17px}.qtext{font-size:19px}.topline{font-size:13px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">PLATAFORMA DE TREINO</div>
+  <h1>Simulador Psicotécnico</h1>
+  <p>Preparação para provas e concursos • MININT Angola</p>
+</header>
+<main>
+<section id="home" class="panel">
+  <h2>Prepara-te, uma pergunta de cada vez.</h2>
+  <p class="muted">Escolhe uma área para treinar ou faz o simulado completo. Cada pergunta tem 50 segundos. No fim, vê a tua classificação e revê as respostas.</p>
+  <div class="stats">
+    <div class="stat"><strong>50</strong><small>Perguntas no simulado completo</small></div>
+    <div class="stat"><strong>50 s</strong><small>Tempo por pergunta</small></div>
+    <div class="stat"><strong>0–20</strong><small>Classificação final</small></div>
+  </div>
+  <button class="primary" onclick="startQuiz('Todas')">Começar simulado completo</button>
+  <h2 style="margin-top:24px">Treinar por categoria</h2>
+  <div class="grid">
+    <button class="category" onclick="startQuiz('Lógica')"><b>🧠 Raciocínio lógico</b><span>Dedução, relações e problemas</span></button>
+    <button class="category" onclick="startQuiz('Matemática')"><b>➗ Matemática básica</b><span>Percentagens, proporções e cálculo</span></button>
+    <button class="category" onclick="startQuiz('Português')"><b>📚 Língua Portuguesa</b><span>Vocabulário, ortografia e analogias</span></button>
+    <button class="category" onclick="startQuiz('Sequências')"><b>🔢 Sequências</b><span>Números e letras</span></button>
+    <button class="category" onclick="startQuiz('Espacial')"><b>🧩 Raciocínio espacial</b><span>Orientação e visualização</span></button>
+  </div>
+  <p class="muted" style="font-size:12px">Este é um projeto independente de treino. Não é um site oficial do MININT e as perguntas não são uma prova oficial.</p>
+</section>
+
+<section id="quiz" class="panel">
+  <div class="topline"><span id="categoryLabel">Categoria</span><span>Pergunta <b id="number">1</b>/<b id="total">50</b> · <span class="timer" id="timer">00:50</span></span></div>
+  <div class="bar"><div id="progress"></div></div>
+  <div class="qtext" id="question"></div>
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="row" style="margin-top:18px"><button class="secondary" onclick="quitQuiz()">Sair</button><button class="primary" id="next" onclick="nextQuestion()" disabled>Próxima pergunta</button></div>
+</section>
+
+<section id="result" class="panel">
+  <h2>Resultado do teu treino</h2>
+  <div class="result-score" id="score">0/20</div>
+  <p class="muted" id="summary"></p>
+  <div class="stats">
+    <div class="stat"><strong id="rightCount">0</strong><small>Respostas certas</small></div>
+    <div class="stat"><strong id="wrongCount">0</strong><small>Respostas erradas / tempo</small></div>
+    <div class="stat"><strong id="percent">0%</strong><small>Aproveitamento</small></div>
+  </div>
+  <div class="row"><button class="primary" onclick="startQuiz(lastCategory)">Repetir prova</button><button class="secondary" onclick="showHome()">Voltar ao início</button></div>
+  <h2 style="margin-top:25px">Correção das perguntas</h2>
+  <div id="review"></div>
+</section>
+</main>
+<footer>Simulador independente para fins educativos • Desenvolvido para treino</footer>
+<script>
+const bank = [
+{c:"Lógica",q:"Todos os agentes são funcionários. Alguns funcionários são estudantes. O que se pode concluir necessariamente?",o:["Todos os agentes são estudantes","Alguns agentes são estudantes","Nenhuma conclusão necessária sobre agentes estudantes","Nenhum funcionário é agente"],a:2,e:"As duas afirmações não garantem que os funcionários estudantes sejam agentes."},
+{c:"Lógica",q:"Nenhum A é B. Todos os C são A. Qual afirmação é necessariamente verdadeira?",o:["Nenhum C é B","Todos os B são C","Alguns C são B","Todos os A são C"],a:0,e:"Se C está contido em A e A não tem elementos em comum com B, C também não é B."},
+{c:"Lógica",q:"Se hoje não chove, então o treino realiza-se. Hoje o treino não se realizou. O que se conclui?",o:["Hoje choveu","Hoje não choveu","O treino foi realizado","Não é possível concluir nada"],a:0,e:"Pela contraposição, se o treino não se realizou, a condição 'não chove' não ocorreu."},
+{c:"Lógica",q:"Ana é mais alta que Beto. Beto é mais alto que Carlos. Quem é o mais baixo?",o:["Ana","Beto","Carlos","Não é possível saber"],a:2,e:"A ordem é Ana, Beto, Carlos."},
+{c:"Lógica",q:"Numa fila, Rui está à frente de Sara e Sara está à frente de Tomás. Quem está em último?",o:["Rui","Sara","Tomás","Não se sabe"],a:2,e:"Tomás está atrás de Sara e Rui."},
+{c:"Lógica",q:"Se todos os livros da caixa são azuis e este livro está na caixa, então:",o:["Este livro é azul","Todos os livros azuis estão na caixa","Este livro é vermelho","A caixa está vazia"],a:0,e:"Aplica-se diretamente a regra: todos os livros da caixa são azuis."},
+{c:"Lógica",q:"A negação de 'Todos os candidatos foram aprovados' é:",o:["Nenhum candidato foi aprovado","Pelo menos um candidato não foi aprovado","Todos foram reprovados","Alguns foram aprovados"],a:1,e:"A negação de 'todos' é 'existe pelo menos um que não'."},
+{c:"Lógica",q:"Um relógio adianta 5 minutos por hora. Quanto adianta em 4 horas?",o:["10 minutos","15 minutos","20 minutos","25 minutos"],a:2,e:"5 × 4 = 20 minutos."},
+{c:"Lógica",q:"Se A é maior que B e B é igual a C, então:",o:["A é menor que C","A é maior que C","A é igual a C","B é maior que A"],a:1,e:"Como B = C e A > B, então A > C."},
+{c:"Lógica",q:"Numa sala há 4 pessoas. Cada pessoa cumprimenta todas as outras uma única vez. Quantos cumprimentos há?",o:["4","6","8","12"],a:1,e:"Número de pares: 4 × 3 ÷ 2 = 6."},
+
+{c:"Matemática",q:"Quanto é 15% de 200?",o:["15","20","30","35"],a:2,e:"0,15 × 200 = 30."},
+{c:"Matemática",q:"Um produto custa 4 000 Kz e recebe um desconto de 10%. Qual é o preço final?",o:["3 400 Kz","3 500 Kz","3 600 Kz","3 900 Kz"],a:2,e:"10% de 4 000 = 400; 4 000 − 400 = 3 600 Kz."},
+{c:"Matemática",q:"Se 5 trabalhadores concluem uma tarefa em 12 dias, ao mesmo ritmo, 10 trabalhadores levam:",o:["3 dias","6 dias","12 dias","24 dias"],a:1,e:"O dobro de trabalhadores demora metade do tempo: 6 dias."},
+{c:"Matemática",q:"Um veículo percorre 180 km em 3 horas. Qual é a velocidade média?",o:["50 km/h","55 km/h","60 km/h","65 km/h"],a:2,e:"180 ÷ 3 = 60 km/h."},
+{c:"Matemática",q:"Qual é o valor de 3/4 de 80?",o:["40","50","60","70"],a:2,e:"80 ÷ 4 × 3 = 60."},
+{c:"Matemática",q:"Um artigo de 2 500 Kz aumenta 20%. Qual é o novo preço?",o:["2 700 Kz","2 900 Kz","3 000 Kz","3 200 Kz"],a:2,e:"20% de 2 500 = 500; total = 3 000 Kz."},
+{c:"Matemática",q:"A soma de 35, 27 e 18 é:",o:["70","75","80","85"],a:2,e:"35 + 27 + 18 = 80."},
+{c:"Matemática",q:"Uma torneira enche 12 litros por minuto. Quantos litros enche em 15 minutos?",o:["120","150","180","200"],a:2,e:"12 × 15 = 180 litros."},
+{c:"Matemática",q:"A razão entre 20 e 5, na forma simplificada, é:",o:["2:1","3:1","4:1","5:1"],a:2,e:"20 ÷ 5 = 4; a razão é 4:1."},
+{c:"Matemática",q:"Metade de 3/5 é:",o:["3/10","3/5","6/5","1/5"],a:0,e:"3/5 ÷ 2 = 3/10."},
+
+{c:"Português",q:"Qual é o sinónimo de 'mitigar'?",o:["Aumentar","Atenuar","Esconder","Agravar"],a:1,e:"Mitigar significa aliviar ou atenuar."},
+{c:"Português",q:"Qual é o antónimo de 'escassez'?",o:["Carência","Falta","Abundância","Restrição"],a:2,e:"Escassez é falta; o contrário é abundância."},
+{c:"Português",q:"Assinale a palavra escrita corretamente:",o:["Mendigo","Mendigu","Mendígo","Mendeguo"],a:0,e:"A grafia correta é mendigo."},
+{c:"Português",q:"'Ratificar' significa:",o:["Corrigir","Confirmar","Apagar","Rejeitar"],a:1,e:"Ratificar é confirmar ou validar."},
+{c:"Português",q:"Qual é o sinónimo de 'magnânimo'?",o:["Mesquinho","Generoso","Rígido","Invejoso"],a:1,e:"Magnânimo significa generoso ou nobre."},
+{c:"Português",q:"Complete a analogia: médico está para hospital assim como professor está para:",o:["Tribunal","Escola","Mercado","Oficina"],a:1,e:"O médico trabalha no hospital; o professor, na escola."},
+{c:"Português",q:"Qual destas palavras é um adjetivo?",o:["Rapidamente","Beleza","Corajoso","Correr"],a:2,e:"Corajoso caracteriza um nome, por isso é adjetivo."},
+{c:"Português",q:"O plural correto de 'cidadão' é:",o:["Cidadões","Cidadãos","Cidadães","Cidadans"],a:1,e:"O plural mais comum e correto é cidadãos."},
+{c:"Português",q:"Qual é o antónimo de 'prudente'?",o:["Cuidadoso","Sensato","Imprudente","Atento"],a:2,e:"Imprudente é o contrário de prudente."},
+{c:"Português",q:"Na frase 'Os candidatos estudaram muito', o sujeito é:",o:["Estudaram","Muito","Os candidatos","Candidatos estudaram"],a:2,e:"'Os candidatos' é quem pratica a ação."},
+
+{c:"Sequências",q:"Qual é o próximo número? 2, 4, 6, 8, ...",o:["9","10","11","12"],a:1,e:"A sequência aumenta de 2 em 2."},
+{c:"Sequências",q:"Qual é o próximo número? 1, 4, 9, 16, ...",o:["20","24","25","36"],a:2,e:"São quadrados: 1², 2², 3², 4², 5²."},
+{c:"Sequências",q:"Complete: 3, 6, 12, 24, ...",o:["30","36","42","48"],a:3,e:"Cada termo é o dobro do anterior."},
+{c:"Sequências",q:"Qual é a próxima letra? A, C, E, G, ...",o:["H","I","J","K"],a:1,e:"Avança uma letra, deixando outra de intervalo."},
+{c:"Sequências",q:"Complete: 100, 90, 80, 70, ...",o:["65","60","55","50"],a:1,e:"A sequência diminui 10 unidades."},
+{c:"Sequências",q:"Qual é o próximo número? 1, 1, 2, 3, 5, 8, ...",o:["11","12","13","15"],a:2,e:"Cada termo é a soma dos dois anteriores."},
+{c:"Sequências",q:"Complete: 5, 10, 20, 40, ...",o:["45","60","70","80"],a:3,e:"Cada número é multiplicado por 2."},
+{c:"Sequências",q:"Qual é a próxima letra? B, D, G, K, ...",o:["M","N","O","P"],a:3,e:"Os saltos são +2, +3, +4 e depois +5: P."},
+{c:"Sequências",q:"Complete: 2, 5, 8, 11, ...",o:["12","13","14","15"],a:2,e:"Aumenta sempre 3 unidades."},
+{c:"Sequências",q:"Qual é o próximo número? 64, 32, 16, 8, ...",o:["2","4","6","12"],a:1,e:"Cada termo é metade do anterior."},
+
+{c:"Espacial",q:"Se estiveres virado para Norte e rodares 90° à direita, para que direção ficarás virado?",o:["Oeste","Este","Sul","Norte"],a:1,e:"À direita de Norte fica Este."},
+{c:"Espacial",q:"Se estiveres virado para Sul e rodares 180°, ficarás virado para:",o:["Norte","Este","Oeste","Sul"],a:0,e:"Uma rotação de 180° aponta para a direção oposta."},
+{c:"Espacial",q:"Um cubo tem quantas faces?",o:["4","6","8","12"],a:1,e:"Um cubo tem seis faces quadradas."},
+{c:"Espacial",q:"Quantos vértices tem um cubo?",o:["6","8","10","12"],a:1,e:"Um cubo tem oito vértices."},
+{c:"Espacial",q:"Num espelho plano, a imagem de um objeto apresenta principalmente inversão:",o:["Cima-baixo","Esquerda-direita","Frente-trás na mesma direção","De tamanho"],a:1,e:"O espelho plano produz inversão lateral aparente."},
+{c:"Espacial",q:"Uma pessoa caminha 3 metros para Norte e depois 3 metros para Sul. Onde termina em relação ao ponto inicial?",o:["3 m a Norte","3 m a Sul","No ponto inicial","6 m a Este"],a:2,e:"Os deslocamentos opostos anulam-se."},
+{c:"Espacial",q:"Quantas arestas tem um cubo?",o:["6","8","10","12"],a:3,e:"Um cubo tem doze arestas."},
+{c:"Espacial",q:"Se virares à esquerda estando virado para Este, passarás a estar virado para:",o:["Norte","Sul","Oeste","Este"],a:0,e:"À esquerda de Este fica Norte."},
+{c:"Espacial",q:"Qual figura geométrica tem três lados?",o:["Quadrado","Retângulo","Triângulo","Pentágono"],a:2,e:"O triângulo tem três lados."},
+{c:"Espacial",q:"Um objeto está à tua frente. Se deres meia-volta, o objeto ficará:",o:["À tua frente","Atrás de ti","À tua direita","À tua esquerda"],a:1,e:"Ao dar meia-volta, o que estava à frente passa a ficar atrás."}
+];
+
+let current=[], index=0, answers=[], seconds=50, tick=null, lastCategory="Todas", locked=false;
+const $=id=>document.getElementById(id);
+function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(category){
+  lastCategory=category;
+  let pool=category==="Todas"?bank:bank.filter(x=>x.c===category);
+  current=shuffle(pool).slice(0,category==="Todas"?50:10);
+  current=current.map(q=>{let opts=q.o.map((v,i)=>({v,ok:i===q.a}));opts=shuffle(opts);return {...q,opts,correct:opts.findIndex(x=>x.ok)}});
+  index=0;answers=[];$("home").style.display="none";$("result").style.display="none";$("quiz").style.display="block";renderQuestion();
+}
+function renderQuestion(){
+  locked=false;seconds=50;let q=current[index];
+  $("categoryLabel").textContent=q.c;$("number").textContent=index+1;$("total").textContent=current.length;
+  $("question").textContent=q.q;$("options").innerHTML="";$("feedback").style.display="none";
+  $("next").disabled=true;$("next").textContent=index===current.length-1?"Ver resultado":"Próxima pergunta";
+  $("progress").style.width=(index/current.length*100)+"%";updateTimer();
+  q.opts.forEach((op,i)=>{let b=document.createElement("button");b.className="option";b.textContent=String.fromCharCode(65+i)+") "+op.v;b.onclick=()=>choose(i);$("options").appendChild(b)});
+  clearInterval(tick);tick=setInterval(()=>{seconds--;updateTimer();if(seconds<=0){clearInterval(tick);if(!locked)choose(-1,true)}},1000);
+}
+function updateTimer(){$("timer").textContent="00:"+String(seconds).padStart(2,"0");$("progress").style.width=((index+(50-seconds)/50)/current.length*100)+"%"}
+function choose(i,timeout=false){
+  if(locked)return;locked=true;clearInterval(tick);let q=current[index];answers[index]=i;
+  [...$("options").children].forEach((b,k)=>{b.disabled=true;if(k===q.correct)b.classList.add("selected")});
+  let fb=$("feedback");fb.style.display="block";
+  if(i===q.correct){fb.innerHTML='<span class="correct">Correto!</span> '+q.e}
+  else{fb.innerHTML=(timeout?'<span class="wrong">Tempo esgotado.</span> ':'<span class="wrong">Resposta incorreta.</span> ')+'Resposta certa: '+String.fromCharCode(65+q.correct)+') '+q.opts[q.correct].v+'. '+q.e}
+  $("next").disabled=false;
+}
+function nextQuestion(){if(!locked)return;if(index<current.length-1){index++;renderQuestion()}else showResult()}
+function showResult(){
+  clearInterval(tick);$("quiz").style.display="none";$("result").style.display="block";
+  let right=answers.filter((a,i)=>a===current[i].correct).length,total=current.length,wrong=total-right,score=(right/total*20).toFixed(1),pct=Math.round(right/total*100);
+  $("score").textContent=score+"/20";$("rightCount").textContent=right;$("wrongCount").textContent=wrong;$("percent").textContent=pct+"%";
+  $("summary").textContent=pct>=80?"Excelente desempenho! Continua a praticar.":pct>=60?"Bom trabalho. Revê os erros e tenta novamente.":"Continua a treinar. A prática ajuda a melhorar o resultado.";
+  $("review").innerHTML="";
+  current.forEach((q,i)=>{let ok=answers[i]===q.correct;let d=document.createElement("div");d.className="review";d.innerHTML='<b>'+(i+1)+'. '+q.q+'</b><p class="'+(ok?'correct':'wrong')+'">'+(ok?'Certo':'Errado / sem resposta')+'</p><p class="muted">Resposta correta: '+String.fromCharCode(65+q.correct)+') '+q.opts[q.correct].v+'</p><p class="muted">'+q.e+'</p>';$("review").appendChild(d)});
+  window.scrollTo(0,0);
+}
+function quitQuiz(){if(confirm("Queres sair desta prova? O progresso atual será perdido.")){clearInterval(tick);showHome()}}
+function showHome(){$("quiz").style.display="none";$("result").style.display="none";$("home").style.display="block";window.scrollTo(0,0)}
+</script>
+</body>
+</html>
